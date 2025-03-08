@@ -1,0 +1,29 @@
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+
+browser=webdriver.Chrome()
+browser.get('https://only.digital/')
+try:
+    # Попробуем найти футер
+    footer = WebDriverWait(browser, 4).until(
+        EC.presence_of_element_located((By.CLASS_NAME,'Footer_root___6Q28')))
+    if footer:
+        print('Футер на месте...')
+        time.sleep(3)
+        year_checking=browser.find_element(By.CLASS_NAME,'Footer_year__nyNCc')
+        year_text=year_checking.text
+        if year_text=='© 2014 - 2025':
+            print('...2025 - текущий год, а значит открываем анкету.')
+            cookie_button=browser.find_element(By.CLASS_NAME,'Cookie_rootButton__38Z2N')
+            cookie_button.click()
+            footer_button=browser.find_element(By.XPATH,'//footer/div/button')
+            footer_button.click()
+            time.sleep(4)
+except (TimeoutException, NoSuchElementException) as ex:
+    print("Футера не видно...")
+finally:
+    browser.quit()
